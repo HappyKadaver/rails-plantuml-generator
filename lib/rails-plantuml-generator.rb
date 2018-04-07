@@ -1,0 +1,1 @@
+require 'rails/plantuml/generator/railtie'
