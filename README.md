@@ -1,24 +1,22 @@
 # Rails::Plantuml::Generator
-Short description and motivation.
+This gem Genrates a plantuml diagramm from your rails models for easy viewing.
 
 ## Usage
-How to use my plugin.
+Run `rake plantuml:generate` to generate a plantuml diagramm of your models. The 
+diagramm will be saved as `diagramm.pu`
 
 ## Installation
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'rails-plantuml-generator'
+group :development do
+  gem 'rails-plantuml-generator', git: 'https://github.com/HappyKadaver/rails-plantuml-generator'
+end
 ```
 
 And then execute:
 ```bash
 $ bundle
-```
-
-Or install it yourself as:
-```bash
-$ gem install rails-plantuml-generator
 ```
 
 ## Contributing
