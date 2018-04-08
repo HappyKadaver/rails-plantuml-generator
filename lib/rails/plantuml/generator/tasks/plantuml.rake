@@ -54,6 +54,8 @@ def determine_associations(models)
 
     result[model] = []
 
+    puts "Analyzing associations of #{model.name}"
+
     associations.each do |association|
       next if association.options[:polymorphic]
       other = association.class_name.constantize
