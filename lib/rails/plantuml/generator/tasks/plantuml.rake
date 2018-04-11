@@ -2,8 +2,9 @@ OUTPUT_FILE = 'diagramm.pu'
 
 ASSOCIATION_TYPE = :association_type
 ASSOCIATION_OTHER_CLASS = :other_class
-ASSOCIATION_TYPE_HAS_MANY = '"*"'
-ASSOCIATION_TYPE_HAS_ONE = '"1"'
+ASSOCIATION_OTHER_NAME = :other_name
+ASSOCIATION_TYPE_HAS_MANY = '~*'
+ASSOCIATION_TYPE_HAS_ONE = '1'
 
 namespace :plantuml do
   desc "Pick a random user as the winner"
@@ -54,8 +55,6 @@ def determine_associations(models)
 
     result[model] = []
 
-    puts "Analyzing associations of #{model.name}"
-
     associations.each do |association|
       next if association.options[:polymorphic]
       other = association.class_name.constantize
@@ -64,12 +63,14 @@ def determine_associations(models)
       when association.collection?
         result[model].append({
                                  ASSOCIATION_TYPE => ASSOCIATION_TYPE_HAS_MANY,
-                                 ASSOCIATION_OTHER_CLASS => other
+                                 ASSOCIATION_OTHER_CLASS => other,
+                                 ASSOCIATION_OTHER_NAME => association.name
                              })
       when association.has_one? || association.belongs_to?
         result[model].append({
                                  ASSOCIATION_TYPE => ASSOCIATION_TYPE_HAS_ONE,
-                                 ASSOCIATION_OTHER_CLASS => other
+                                 ASSOCIATION_OTHER_CLASS => other,
+                                 ASSOCIATION_OTHER_NAME => association.name
                              })
       end
     end
@@ -102,10 +103,18 @@ def write_associations(association_hash, file)
     associations.each do |meta|
       other = meta[ASSOCIATION_OTHER_CLASS]
       back_associtiation_meta = association_hash[other].find {|other_meta| other_meta[ASSOCIATION_OTHER_CLASS] == clazz}
-      back_associtiation_symbol = back_associtiation_meta[ASSOCIATION_TYPE] if back_associtiation_meta
-      association_hash[other].delete back_associtiation_meta
 
-      file.puts "#{class_name clazz} #{back_associtiation_symbol} -- #{meta[ASSOCIATION_TYPE]} #{class_name other}"
+      back_associtiation_symbol = back_associtiation_meta[ASSOCIATION_TYPE] if back_associtiation_meta
+      back_associtiation_name = back_associtiation_meta[ASSOCIATION_OTHER_NAME] if back_associtiation_meta
+
+      association_hash[other].delete back_associtiation_meta
+      associations.delete meta
+
+      file.write class_name clazz
+      file.write " \"#{back_associtiation_symbol}"
+      file.write " #{back_associtiation_name}"
+      file.write '"'
+      file.puts " -- \"#{meta[ASSOCIATION_TYPE]} #{meta[ASSOCIATION_OTHER_NAME]}\" #{class_name other}"
     end
   end
 end
