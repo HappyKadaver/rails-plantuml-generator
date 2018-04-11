@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rails-plantuml-generator (0.4.0)
+    rails-plantuml-generator (0.5.0)
       rails (>= 3)
 
 GEM
