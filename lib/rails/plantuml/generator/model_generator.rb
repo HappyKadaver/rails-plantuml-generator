@@ -8,7 +8,7 @@ module Rails
 
           @associations_hash = determine_associations @models
         end
-        
+
         def class_relevant?(clazz)
           return false unless clazz < (ApplicationRecord || ActiveRecord::Base)
           return true unless @whitelist_regex
@@ -36,6 +36,7 @@ module Rails
 
             associations.each do |association|
               next if association.options[:polymorphic]
+              next if association.through_reflection
               other = association.class_name.constantize
 
               next unless class_relevant? other
@@ -73,7 +74,7 @@ module Rails
 
           io.puts '@enduml'
         end
-        
+
         def write_class(clazz, io)
           parent = clazz.superclass
 
