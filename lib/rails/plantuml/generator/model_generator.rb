@@ -10,7 +10,7 @@ module Rails
         end
 
         def class_relevant?(clazz)
-          return false unless clazz < (ApplicationRecord || ActiveRecord::Base)
+          return false unless clazz < ((defined? ApplicationRecord).present? ? ApplicationRecord : ActiveRecord::Base)
           return true unless @whitelist_regex
           !@whitelist_regex.match(clazz.name).nil?
         end
