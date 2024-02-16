@@ -37,7 +37,7 @@ module Rails
             associations.each do |association|
               next if association.options[:polymorphic]
               next if association.through_reflection
-              other = association.class_name.constantize
+              other = association.klass
 
               next unless class_relevant? other
 
